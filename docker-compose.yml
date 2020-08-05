@@ -1,0 +1,21 @@
+version: '3.6'
+
+services:
+  app:
+    build: .
+    volumes:
+      - .:/var/www
+      - static_volume:/var/www/cherre/staticfiles
+
+  nginx:
+    image: nginx:1.13
+    ports:
+      - 8000:8000
+    volumes:
+      - ./config/nginx/conf.d:/etc/nginx/conf.d
+      - static_volume:/var/www/cherre/staticfiles
+    depends_on:
+      - app
+
+volumes:
+  static_volume:
