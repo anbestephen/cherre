@@ -9,8 +9,6 @@ ADD . /code/
 RUN pip3 install -r requirements.txt
 
 EXPOSE 8000
-EXPOSE 80
-EXPOSE 443
 
 CMD ["python3", "manage.py", "collectstatic"]
 CMD [ "python3", "manage.py", "runserver", "0.0.0.0:8080"]
