@@ -1,14 +1,23 @@
-FROM python:3.8-alpine
+FROM python:3.6-slim
 
+# Set environment varibles
+ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-RUN mkdir /code
-WORKDIR  /code
-ADD . /code/
+# Set work directory
+ARG PROJECT=cherre
+ARG PROJECT_DIR=/var/www/${PROJECT}
 
-RUN pip3 install -r requirements.txt
+RUN mkdir -p $PROJECT_DIR
 
+# Copy project
+COPY . $PROJECT_DIR/
+COPY docker-entrypoint.sh /
+RUN chmod u+x /docker-entrypoint.sh
+# give permission for nginx to read static files
+RUN chown -R "$USER":www-data /var/www/${PROJECT}/staticfiles \
+    && chmod -R 0755 /var/www/${PROJECT}/staticfiles
+
+WORKDIR $PROJECT_DIR
 EXPOSE 8000
-
-CMD ["python3", "manage.py", "collectstatic"]
-CMD [ "python3", "manage.py", "runserver", "0.0.0.0:8080"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
